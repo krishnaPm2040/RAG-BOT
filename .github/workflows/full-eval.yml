@@ -1,0 +1,145 @@
+# The FULL evaluation on YOUR Windows PC (a self-hosted runner): the same commands, in the same
+# order, as the Evaluation section of README.md. One step per command.
+# GitHub's own machines cannot run it: the PDFs are not in the repository, and qwen3:8b
+# needs Ollama and many hours. Start it by hand: GitHub -> Actions -> full-eval -> Run workflow.
+# Step 5 of the README (python eval.py --grade ...) asks y / p / n for each answer, so it
+# cannot run here: run it yourself afterwards, then python eval.py --report.
+#
+# The runner must run as YOUR Windows user (run.cmd in the runner folder, or the runner
+# service set to "Log on as" your account). As a service under NETWORK SERVICE it cannot
+# read C:\Users\Krishna\Desktop and does not see Ollama on its PATH.
+name: full-eval
+
+on:
+  workflow_dispatch:
+    inputs:
+      project_dir:
+        description: "Project folder on the PC (with raw_pdfs, vector_db and .venv)"
+        type: string
+        default: 'C:\Users\Krishna\Desktop\RAG'
+      answers:
+        description: "Also run step 4, the slow answer runs (many hours)?"
+        type: boolean
+        default: true
+      push_results:
+        description: "Commit and push the new test results (test_result folder) to GitHub?"
+        type: boolean
+        default: true
+
+# Never let two full evaluations run at the same time on the same PC.
+concurrency:
+  group: full-eval
+  cancel-in-progress: false
+
+jobs:
+  eval:
+    runs-on: [self-hosted, windows]
+    timeout-minutes: 2880            # 48 hours
+    defaults:
+      run:
+        shell: cmd
+        working-directory: ${{ inputs.project_dir }}
+    env:
+      PROJECT: ${{ inputs.project_dir }}
+      PY: ${{ inputs.project_dir }}\.venv\Scripts\python.exe   # full path, not relative
+      PYTHONIOENCODING: utf-8
+      PYTHONUTF8: "1"
+      OLLAMA_URL: http://localhost:11434
+    steps:
+      # Runs from the runner's own folder, so it still works (and explains why) when the
+      # project folder is missing or the runner's account cannot open it.
+      - name: "0. Check the runner can see the project folder and its .venv"
+        working-directory: ${{ github.workspace }}
+        run: |
+          echo Runner account: & whoami
+          if not exist "%PROJECT%\" (echo Project folder not found or no access: %PROJECT% & echo Run the runner as your own Windows user. & exit /b 1)
+          if not exist "%PY%" (echo Python not found: %PY% & echo Create it: python -m venv .venv, then pip install -r requirements.txt & exit /b 1)
+          "%PY%" --version || exit /b 1
+
+      # Asks Ollama itself (HTTP API) instead of the ollama command, so it does not depend
+      # on ollama.exe being on the runner's PATH.
+      - name: "0. Check Ollama is running with both models"
+        run: |
+          "%PY%" -c "import json,urllib.request as u; t=json.load(u.urlopen('%OLLAMA_URL%/api/tags',timeout=10)); n=[m['name'] for m in t.get('models',[])]; print('Ollama is running. Models:', ', '.join(n) or 'none'); miss=[x for x in ('qwen3:8b','nomic-embed-text') if not any(m==x or m.startswith(x+':') for m in n)]; [print('Model missing: ollama pull '+x) for x in miss]; raise SystemExit(1 if miss else 0)" || (echo Ollama check failed: start Ollama on this PC and pull the missing models. & exit /b 1)
+
+      # "< NUL" on every Python step: if a script ever waits for typed input, it gets
+      # end-of-input and stops at once instead of hanging the run for 48 hours.
+      - name: "1. Checks: python -m pytest tests -q"
+        run: '"%PY%" -m pytest tests -q -p no:cacheprovider < NUL'
+
+      - name: "1. Checks: python check_lost_docs.py"
+        run: '"%PY%" check_lost_docs.py < NUL'
+
+      - name: "1. Checks: python check_corpus.py"
+        run: '"%PY%" check_corpus.py < NUL'
+
+      - name: "2. Floor: python eval.py --bm25-pages"
+        run: '"%PY%" eval.py --bm25-pages < NUL'
+
+      - name: "2. Floor: python eval.py --bm25-pages --test=qa_heldout.csv"
+        run: '"%PY%" eval.py --bm25-pages --test=qa_heldout.csv < NUL'
+
+      - name: "3. Retrieval only: python app.py --strategy=semantic"
+        run: '"%PY%" app.py --strategy=semantic < NUL'
+
+      - name: "3. Retrieval only: python eval.py --all --setups --retrieval-only"
+        run: '"%PY%" eval.py --all --setups --retrieval-only < NUL'
+
+      - name: "3. Retrieval only: python eval.py --all --setups --retrieval-only --test=qa_heldout.csv"
+        run: '"%PY%" eval.py --all --setups --retrieval-only --test=qa_heldout.csv < NUL'
+
+      - name: "4. Answers: python eval.py --strategy=recursive"
+        if: ${{ inputs.answers }}
+        run: '"%PY%" eval.py --strategy=recursive < NUL'
+
+      - name: "4. Answers: python eval.py --strategy=recursive --test=qa_heldout.csv"
+        if: ${{ inputs.answers }}
+        run: '"%PY%" eval.py --strategy=recursive --test=qa_heldout.csv < NUL'
+
+      - name: "4. Answers: python eval.py --strategy=recursive --hybrid"
+        if: ${{ inputs.answers }}
+        run: '"%PY%" eval.py --strategy=recursive --hybrid < NUL'
+
+      - name: "4. Answers: python eval.py --strategy=recursive --hybrid --test=qa_heldout.csv"
+        if: ${{ inputs.answers }}
+        run: '"%PY%" eval.py --strategy=recursive --hybrid --test=qa_heldout.csv < NUL'
+
+      - name: "4. Answers: python eval.py --strategy=recursive --hybrid --test=qa_old_wording.csv"
+        if: ${{ inputs.answers }}
+        run: '"%PY%" eval.py --strategy=recursive --hybrid --test=qa_old_wording.csv < NUL'
+
+      - name: "4. Answers: python eval.py --strategy=recursive --hybrid --rerank"
+        if: ${{ inputs.answers }}
+        run: '"%PY%" eval.py --strategy=recursive --hybrid --rerank < NUL'
+
+      - name: "4. Answers: python eval.py --strategy=recursive --hybrid --rerank --test=qa_heldout.csv"
+        if: ${{ inputs.answers }}
+        run: '"%PY%" eval.py --strategy=recursive --hybrid --rerank --test=qa_heldout.csv < NUL'
+
+      # Runs even when an earlier step failed, as long as the project folder was reachable.
+      - name: "6. Report: python eval.py --report"
+        if: ${{ !cancelled() }}
+        run: '"%PY%" eval.py --report < NUL'
+
+      # Uses your own Git login on this PC (not GitHub's job token), so it still works after
+      # a run of more than 24 hours.
+      - name: "7. Commit and push the test_result folder"
+        if: ${{ !cancelled() && inputs.push_results }}
+        run: |
+          if not exist test_result\ (echo No test_result folder: nothing to commit. & exit /b 0)
+          git rev-parse --is-inside-work-tree >NUL 2>&1 || (echo %PROJECT% is not a Git repository: cannot push. & exit /b 1)
+          git add test_result || exit /b 1
+          git diff --cached --quiet && (echo No new results to commit. & exit /b 0)
+          git commit -m "Update test results (full-eval run ${{ github.run_number }}) [skip ci]" || exit /b 1
+          git push || (echo git push failed: run git push once by hand in %PROJECT% to save your login. & exit /b 1)
+
+      # GitHub's job token expires after 24 hours, so after a very long run this upload can
+      # fail. The results are already pushed by step 7, so a failure here does not fail the run.
+      - name: "8. Download: the test_result folder"
+        if: ${{ always() }}
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-result
+          path: ${{ inputs.project_dir }}\test_result\
+          if-no-files-found: warn

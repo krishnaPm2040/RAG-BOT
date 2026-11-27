@@ -1,0 +1,11 @@
+pdfplumber
+pymupdf
+langchain-core
+langchain-text-splitters
+langchain-ollama
+langchain-chroma
+rank_bm25
+sentence-transformers
+streamlit
+pytest
+

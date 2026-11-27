@@ -1,0 +1,64 @@
+PDF                                                            pages JSON type           current   sect  words chunks  problem
+1. Management of Assets-Liabilities.pdf                           67   NO -              -            0      0      0  SKIPPED by clean_pdfs.py (last log entry): duplicate same file as Management of Assets-Liabilities.pdf; no JSON
+Annual Report FY2026.pdf                                         592  yes annual_report  True      9992 283261      0  typed annual_report -> left out of the database
+Annual report.pdf                                                 29  yes general        True       116  13460    141  
+annual-report-for-the-year-2025-2026.pdf                         520  yes annual_report  True      2461 196244      0  SKIPPED by clean_pdfs.py (last log entry): timeout timed out after 1000s; typed annual_report -> left out of the database
+Appendix Credit Facilities to Scheduled Castes Scheduled Tribe     8  yes rbi_circular   True        16   1734     16  
+Beavare.pdf                                                       39  yes rbi_circular   True       121   6186     61  
+Chapter I Preliminary (2).pdf                                     98  yes rbi_circular   True       206  29116    236  
+Chapter I Preliminary.pdf                                        107  yes rbi_circular   True        58  30990    241  
+Chapter II Financial Institutions Soundness and Resilience.pdf    44  yes general        True       145  12075    135  
+ComplaintForm_English(FORM OF COMPLAINT (TO BE LODGED) WITH TH     5  yes general        True         8    807     10  
+Deposits with Scheduled Commercial.pdf                             2  yes rbi_circular   True         7    471      6  
+Forthcoming Instructions.pdf                                      83  yes rbi_circular   True       111  25949    208  
+Governors Statement June 05, 2026.pdf                              7  yes rbi_circular   True        18   2899     42  
+icici-bank-annual-report-2025-26.pdf                             349  yes annual_report  True      1330 132664      0  typed annual_report -> left out of the database
+Management of Assets-Liabilities.pdf                              67  yes rbi_circular   True        47   9156     78  
+Master Directions on Relief Savings Bonds.pdf                      6  yes rbi_circular   True        13   1338     14  
+Outcomeoffinancialresults.pdf                                     44  yes annual_report  True       197  12449      0  typed annual_report -> left out of the database
+RB-IOS, 2026.pdf                                                  10  yes faq            True        73   3453     31  
+RBI ((Non-Banking Financial Companies) Direction.pdf              18  yes rbi_circular   True        35   5458     47  
+RBI (Credit Information Companies) Direction.pdf                  16  yes rbi_circular   True        33   5009     40  
+RBI (Customer Protection) Direction.pdf                            9  yes rbi_circular   False       33   2441     26  marked OLD (stamp='Withdrawn', superseded_by=None) -> hidden unless the question asks for old versions
+RBI (FAQ) Direction.pdf                                           10  yes faq            True        18   1913     16  
+RBI (FAQ1) Direction.pdf                                           7  yes faq            True        13   2498     22  
+RBI (FAQ2) Direction.pdf                                          17  yes faq            True        60   6532     56  
+RBI (FAQ3) Direction.pdf                                           2  yes faq            True         5   1044      9  
+RBI (FAQ5) Direction.pdf                                           7  yes faq            True        18   2345     20  
+RBI (FAQ6) Direction.pdf                                           9  yes faq            True        53   2546     28  
+RBI (FAQ7) Direction.pdf                                           9  yes faq            True        38   2570     25  
+RBI (Master Circular 2025) Direction.pdf                          26  yes rbi_circular   False       69   6906     68  marked OLD (stamp='Withdrawn', superseded_by=None) -> hidden unless the question asks for old versions
+RBI (paper) Direction.pdf                                          1  yes rbi_circular   True         6    383      4  
+RBI (Payments Banks) Direction.pdf                                16  yes rbi_circular   True        33   5413     43  
+RBI (Small finance bank) Direction.pdf                            16  yes rbi_circular   True        31   5482     45  
+RBI DBR 2015-16 19.pdf                                            28  yes rbi_circular   False       81   6562     58  marked OLD (stamp='Withdrawn', superseded_by=None) -> hidden unless the question asks for old versions
+RBI Direction.pdf                                                 16  yes rbi_circular   True        32   5295     42  
+RBI Issues.pdf                                                     1  yes rbi_circular   True         6    279      4  
+RBI.pdf                                                            3  yes rbi_circular   True        20    772      9  
+Reserve Bank of India (Commercial Banks - Prudential Norms on    412  yes rbi_circular   True       648 131706   1110  
+Reserve Bank of India (Know Your Customer (KYC)) (Amendment).p     3  yes rbi_circular   False        7    727      8  marked OLD (stamp='Withdrawn', superseded_by=None) -> hidden unless the question asks for old versions
+Withdrawal of Legal Tender Character of the Old Bank Notes in      5  yes rbi_circular   True         5   1677     15  
+
+Where are the answer words of the failing questions?
+
+  q016 SIM swap  (sim swap / sim cloning / duplicate sim)
+    annual-report-for-the-year-2025-2026.pdf                     PDF pages [263]  JSON: yes  database: NO
+    Beavare.pdf                                                  PDF pages [3, 12]  JSON: yes  database: yes
+
+  q017 screen sharing  (screen sharing)
+    Beavare.pdf                                                  PDF pages [3, 11]  JSON: yes  database: yes
+
+  h15 vishing  (vishing)
+    Annual Report FY2026.pdf                                     PDF pages [133, 496]  JSON: yes  database: NO
+    Beavare.pdf                                                  PDF pages [3, 7, 38]  JSON: yes  database: yes
+
+  q026 BSBD minimum balance (LAB)  (minimum balance / bsbd)
+    Annual Report FY2026.pdf                                     PDF pages [478, 530, 531, 589]  JSON: yes  database: NO
+    Chapter I Preliminary (2).pdf                                PDF pages [15, 16, 25]  JSON: yes  database: yes
+    icici-bank-annual-report-2025-26.pdf                         PDF pages [59]  JSON: yes  database: NO
+    RBI (Customer Protection) Direction.pdf                      PDF pages [4]  JSON: yes  database: yes
+    RBI (FAQ1) Direction.pdf                                     PDF pages [2]  JSON: yes  database: yes
+    RBI DBR 2015-16 19.pdf                                       PDF pages [5]  JSON: yes  database: yes
+
+  h13 free withdrawals (LAB)  (free withdrawals / four withdrawals)
+    Chapter I Preliminary (2).pdf                                PDF pages [15]  JSON: yes  database: yes

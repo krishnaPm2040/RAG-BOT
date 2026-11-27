@@ -1,0 +1,13 @@
+raw_pdfs/
+*.pdf
+output/
+vector_db/
+*.complete.json
+rename_map.csv
+.venv/
+.venv-ragas/
+.env
+__pycache__/
+.pytest_cache/
+.vscode/
+eval_results_old_*.csv

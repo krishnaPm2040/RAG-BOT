@@ -1,0 +1,29 @@
+# Logic tests on every push and pull request (GitHub's free Linux machine).
+# No Ollama, no PDFs needed: tests/test_logic.py only tests the code.
+name: tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: "Install libraries (CPU-only torch, a smaller download)"
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -r requirements.txt
+
+      - name: Run the logic tests
+        run: python -m pytest tests -q
